@@ -3,8 +3,6 @@ clc % vide ligne de commande
 clear all % vide workspace
 close all % vide fenetres et graphiques
 
-
-
 %% Partie 1 - Exercice 1
 disp('Exercice 1')
 [avg, std_dev] = exercice1(100);
@@ -48,6 +46,41 @@ histogram(X2)
 
 
 %% Partie 1 - Exercice 4
+N = 10000;
+dx = 0.1;
+x1 = [0:dx:5];
+F = 0.5.*(1 + sqrt(1-exp(-(x1.^2).*sqrt(pi/8))));
+
+figure
+plot(x1, F)
+hold on 
+
+x2 = [-5:dx:0];
+F2 = 0.5.*(1 + sqrt(1-exp(-(x2.^2).*sqrt(pi/8))));
+plot(x2,1 - F2)
+
+% b)
+
+
+%dp = 0.01;
+%p = [0.5:dp:1];
+p = rand(100);
+x = sqrt(-log(1 - (2 .* p - 1).^2) / sqrt(pi/8));
+
+figure
+histogram(x)
+hold on
+
+%p = [0:dp:0.5];
+p = 0.5.*rand(100);
+x = -sqrt(-log(1 - (2 .* p - 1).^2) / sqrt(pi/8));
+
+histogram(x)  
+hold off
+
+
+
+
 
 
 
