@@ -29,10 +29,10 @@ hold on
 [avg, std_dev] = exercice2(10000, 10, 2);
 hold off
 
-% erreur quadratique ?
-% E = sum((g-yn).^2) ?
-
 %% Partie 1 - Exercice 3
+disp('Exercice 3')
+
+
 
 
 
@@ -42,12 +42,25 @@ function [avg, std_dev] = exercice1(N)
     ech = -5 + (5 + 5)*rand(N);
     [avg, std_dev] = stats(ech);
     fprintf('N %6d, moyenne %1.5f, ecart-type %1.5f \n', N, avg, std_dev);
+    
+    % Erreur quadratique p. 220
+    theo = ( 5 +(-5))^2;
+    err__avg = (theo - avg)^2;
+    theo = 5 +(-5)/sqrt(12);
+    err__std = (theo - std_dev)^2;
+    
+    fprintf('Erreur quadratique moyenne %f, ecart-type %f \n\n', err__avg, err__std);
 end
 
 function [avg, std_dev] = exercice2(N, w_avg, w_std_dev)
     ech = w_std_dev.*randn(N) + w_avg;
     [avg, std_dev] = stats(ech);
     fprintf('N %6d, moyenne %1.5f, ecart-type %1.5f \n', N, avg, std_dev);
+    
+    % Erreur quadratique p. 220
+    err__avg = (w_avg - avg)^2;
+    err__std = (w_std_dev - std_dev)^2;
+    fprintf('Erreur quadratique moyenne %f, ecart-type %f \n\n', err__avg, err__std);
 end
 
 function [avg, std_dev] = stats(ech)
