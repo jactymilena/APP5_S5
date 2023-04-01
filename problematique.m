@@ -1,4 +1,3 @@
-
 %% Clean up
 clc % vide ligne de commande
 clear all % vide workspace
@@ -34,6 +33,29 @@ title("Loi de Rayleigh théorique")
 xlabel("r")
 legend('\sigma^2=0.25', '\sigma^2=1', '\sigma^2=4', '\sigma^2=9', '\sigma^2=16');
 hold off
+
+%% Méthode d'inversion de la CDF e) f)
+dp = 0.01;
+p = [0:dp:1];
+sigma_2 = 4;
+r = sqrt(-2*sigma_2.*log(-p));
+plot(p, r)
+
+% TODO : valider quel est graphique à afficher et quel est le lien avec les
+% distances radiales D
+
+N = 10000;
+p = rand(1, N);
+r = sqrt(-2*sigma_2.*log(-p));
+
+histogram(r)
+
+%% Comparaison g)
+N = 10000
+r = raylrnd(1, N, 1)
+histfit(r, 100,"rayleigh")
+
+
 
 
 
