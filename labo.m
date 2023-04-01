@@ -31,7 +31,7 @@ N = 10000
 X1 = []
 
 for U = rand(2, N)
-    X1 = [X, 10 + 2*cos(2*pi*U(1))*sqrt(-2*log(U(2)))];
+    X1 = [X1, 10 + 2*cos(2*pi*U(1))*sqrt(-2*log(U(2)))];
 end
 figure
 histogram(X1)
@@ -39,7 +39,7 @@ histogram(X1)
 X2 = []
 
 for U = rand(2, N)
-    X2 = [X, 10 + 2*sin(2*pi*U(1))*sqrt(-2*log(U(2)))];
+    X2 = [X2, 10 + 2*sin(2*pi*U(1))*sqrt(-2*log(U(2)))];
 end
 figure
 histogram(X2)
@@ -77,10 +77,6 @@ x = -sqrt(-log(1 - (2 .* p - 1).^2) / sqrt(pi/8));
 
 histogram(x)  
 hold off
-
-
-
-
 
 
 
