@@ -1,19 +1,25 @@
+
 %% Clean up
 clc % vide ligne de commande
 clear all % vide workspace
 close all % vide fenetres et graphiques
 
+% Angle de l'erreur : err_angle
+% Module de l'erreur : r
+% Module de l'erreur théorique : r_theo
+
 %% Initilisation a)
 N = 10000;
 U = rand(1, N);
-U_theta = 2*pi*U;
+err_angle = 2*pi*U;
 
 dx = 1;
 x = [0:dx:N-1];
 
 figure
-plot(x, U_theta)
+plot(x, err_angle)
 title("Graphique de U[0, 2\pi]")
+
 %% Histogramme b)
 figure
 histogram(U)
@@ -38,24 +44,26 @@ hold off
 dp = 0.01;
 p = [0:dp:1];
 sigma_2 = 4;
-r = sqrt(-2*sigma_2.*log(-p));
+r = sqrt(-2*sigma_2.*log(1-p));
 plot(p, r)
+title("Graphique du module de l'erreur sur 10,000 réalisations")
 
-% TODO : valider quel est graphique à afficher et quel est le lien avec les
-% distances radiales D
-
+%% Comparaison des histogrammes g)
 N = 10000;
+
+% Génération des nombres
 p = rand(1, N);
-r = sqrt(-2*sigma_2.*log(-p));
+r = sqrt(-2*sigma_2.*log(1-p));
 
+figure
+subplot(2, 1, 1);
 histogram(r)
+title("Histogramme des 10,000 nombre générés")
 
-%% Comparaison g)
-N = 10000
-r = raylrnd(1, N, 1)
-histfit(r, 100,"rayleigh")
+% Génération des nombres théoriquement
+r_theo = raylrnd(1, N, 1);
 
-
-
-
+subplot(2, 1, 2); 
+histfit(r_theo, 50,"rayleigh")
+title("Histogramme des 10,000 nombre générés théoriquement selon la distribution de Rayleigh")
 
