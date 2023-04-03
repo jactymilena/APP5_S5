@@ -85,28 +85,41 @@ subplot(2, 1, 2)
 scatter_module_err(r2, err_angle, sigma_2(2))
 
 %% 3. Valeurs aléatoires de la distance radiale et de l'angle de visée du radar
-[D1, phi1] = couple_D_phi(D0(1), phi0(1), err_angle, r1);
-figure
-subplot(2, 1, 1)
-scatter_couple_D_phi(D1, phi1, D0(1))
+D = [];
+phi = [];
 
-[D2, phi2] = couple_D_phi(D0(2), phi0(2), err_angle, r2);
-subplot(2, 1, 2)
-scatter_couple_D_phi(D2, phi2, D0(2))
+figure
+
+subplot(2, 2, 1)
+[D, phi] = couple_D_phi(D0(1), phi0(1), err_angle, r1, D, phi);
+
+subplot(2, 2, 2)
+[D, phi] = couple_D_phi(D0(1), phi0(2), err_angle, r1, D, phi);
+
+subplot(2, 2, 3)
+[D, phi] = couple_D_phi(D0(2), phi0(1), err_angle, r2, D, phi);
+
+subplot(2, 2, 4)
+[D, phi] = couple_D_phi(D0(2), phi0(2), err_angle, r2, D, phi);
 
 %% 4. Distances axiales [Dx Dy]
-[Dx, Dy] = distaces_axiales(D0(1), phi0(1), r1, err_angle);
+Dx = [];
+Dy = [];
+count = 1
+r_arr(1,:) = r1;
+r_arr(2,:) = r2;
+
 figure
-subplot(3, 1, 1)
-scatter_couple_Dx_Dy(Dx, Dy, D0(1));
-
-subplot(3, 1, 2)
-plot(x, Dx)
-title("Graphique des réalisations Dx en fonction des indices de itérations")
-
-subplot(3, 1, 3)
-plot(x, Dy)
-title("Graphique des réalisations Dy en fonction des indices de itérations")
+for i = [1, 2]
+    for j = [1, 2]
+        subplot(2, 2, count)
+        [Dx_t, Dy_t] = distaces_axiales(D0(i), phi0(j), r_arr(i,:), err_angle);
+        Dx = [Dx, Dx_t];
+        Dy = [Dy, Dy_t];
+        
+        count = count + 1
+    end
+end
 
 %% 5. Histogramme des distances axiales Dx et Dy
 figure
@@ -163,24 +176,27 @@ function scatter_module_err(r, err_angle, sigma_2)
     title("Nuage de points des couples [r \theta] pour \sigma^2=" + sigma_2);
 end
 
-function scatter_couple_D_phi(r, err_angle, D0)
+function scatter_couple_D_phi(r, err_angle, D0, phi0)
     scatter(r, err_angle)
-    title("Nuage de points des couples [D \phi] pour D0=" + D0);
+    title("Nuage de points des couples [D \phi] pour D0=" + D0 + " \phi0=" + phi0);
 end
 
-function scatter_couple_Dx_Dy(Dx, Dy, D0)
+function [D, phi] = couple_D_phi(D0, phi0, theta, r, D, phi)
+    D1 = D0 + r.*cos(theta);
+    phi1 = phi0 + r.*sin(theta);
+    
+    D = [D, D1];
+    phi = [phi, phi1];
+
+    scatter_couple_D_phi(D1, phi1, D0, phi0)
+end
+
+function [Dx, Dy] = distaces_axiales(D0, phi0, r, theta)
+    Dx = (D0)*cosd(phi0) + r.*cos(theta);
+    Dy = (D0)*sind(phi0) + r.*sin(theta);
+    
     scatter(Dx, Dy)
-    title("Nuage de points des couples [Dx Dy] pour D0=" + D0);
-end
-
-function [D, phi] = couple_D_phi(D0, phi0, theta, r)
-    D = D0 + r.*cos(theta);
-    phi = phi0 + r.*sin(theta);
-end
-
-function [Dx, Dy] = distaces_axiales(D, phi, r, theta)
-    Dx = (D)*cosd(phi) + r.*cos(theta);
-    Dy = (D)*sind(phi) + r.*sin(theta);
+    title("Nuage de points des couples [Dx Dy] pour D0=" + D0 + " \phi0=" + phi0);
 end
 
 function plot_err_ellipse(mu, C, NC)
