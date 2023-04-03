@@ -1,4 +1,3 @@
-
 %% Clean up
 clc % vide ligne de commande
 clear all % vide workspace
@@ -71,10 +70,10 @@ histogram(r1)
 title("Histogramme des 10,000 nombre générés")
 
 % Génération des nombres théoriquement
-r_theo = raylrnd(1, N, 1);
+r_theo = raylrnd(2, N, 1);
 
 subplot(2, 1, 2); 
-histfit(r_theo, 50,"rayleigh")
+histogram(r_theo)
 title("Histogramme des 10,000 nombre générés théoriquement selon la distribution de Rayleigh")
 
 %% 2. Nuage de points des couples [r err_angle]
@@ -100,6 +99,7 @@ scatter_couple_D_phi(D2, phi2, D0(2))
 figure
 subplot(3, 1, 1)
 scatter_couple_Dx_Dy(Dx, Dy, D0(1));
+
 subplot(3, 1, 2)
 plot(x, Dx)
 title("Graphique des réalisations Dx en fonction des indices de itérations")
@@ -109,13 +109,43 @@ plot(x, Dy)
 title("Graphique des réalisations Dy en fonction des indices de itérations")
 
 %% 5. Histogramme des distances axiales Dx et Dy
-%count = Dx.Values;
-%plot(count./N)
 figure
-y = histogram(Dx)
+subplot(2, 1, 1)
+y = histogram(Dx);
 hold on
 freq = y.Values;
 plot(freq)
+hold off
+
+subplot(2, 1, 2)
+y = histogram(Dy);
+hold on
+freq = y.Values;
+plot(freq)
+hold off
+
+% Moyenne Dx
+moy1 = mean(Dx);
+
+% Écart-Type Dx
+std_dev = std(Dx);
+
+% Moyenne Dy
+moy2 = mean(Dy);
+
+% Écart-Type Dy
+std_dev = std(Dy);
+
+
+
+%% 8. Matrice de covariance
+mat_cov = cov(Dx, Dy)
+
+%% 9. Ellipse d'incertitude 
+figure
+scatter_couple_Dx_Dy(Dx, Dy, D0(1));
+hold on
+plot_err_ellipse([moy1, moy2], mat_cov, 0.95)
 hold off
 
 %% Functions 
@@ -151,4 +181,12 @@ end
 function [Dx, Dy] = distaces_axiales(D, phi, r, theta)
     Dx = (D)*cosd(phi) + r.*cos(theta);
     Dy = (D)*sind(phi) + r.*sin(theta);
+end
+
+function plot_err_ellipse(mu, C, NC)
+    s = -2*log(1 - NC);
+    [EigVect, EigVal] = eig(C*s);
+    t = linspace(0, 2*pi);
+    a = (EigVect * sqrt(EigVal))  * [cos(t(:))'; sin(t(:))'];
+    plot(a(1,:) + mu(1), a(2,:) + mu(2))
 end
