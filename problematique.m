@@ -86,14 +86,37 @@ subplot(2, 1, 2)
 scatter_module_err(r2, err_angle, sigma_2(2))
 
 %% 3. Valeurs aléatoires de la distance radiale et de l'angle de visée du radar
-[D, phi] = couple_D_phi(D0(1), phi0(1), err_angle, r1);
+[D1, phi1] = couple_D_phi(D0(1), phi0(1), err_angle, r1);
 figure
 subplot(2, 1, 1)
-scatter_couple_D_phi(D, phi, D0(1))
+scatter_couple_D_phi(D1, phi1, D0(1))
 
-[D, phi] = couple_D_phi(D0(2), phi0(2), err_angle, r2);
+[D2, phi2] = couple_D_phi(D0(2), phi0(2), err_angle, r2);
 subplot(2, 1, 2)
-scatter_couple_D_phi(D, phi, D0(2))
+scatter_couple_D_phi(D2, phi2, D0(2))
+
+%% 4. Distances axiales [Dx Dy]
+[Dx, Dy] = distaces_axiales(D0(1), phi0(1), r1, err_angle);
+figure
+subplot(3, 1, 1)
+scatter_couple_Dx_Dy(Dx, Dy, D0(1));
+subplot(3, 1, 2)
+plot(x, Dx)
+title("Graphique des réalisations Dx en fonction des indices de itérations")
+
+subplot(3, 1, 3)
+plot(x, Dy)
+title("Graphique des réalisations Dy en fonction des indices de itérations")
+
+%% 5. Histogramme des distances axiales Dx et Dy
+%count = Dx.Values;
+%plot(count./N)
+figure
+y = histogram(Dx)
+hold on
+freq = y.Values;
+plot(freq)
+hold off
 
 %% Functions 
 function [r] = gen_nombres(p, sigma_2)
@@ -115,7 +138,17 @@ function scatter_couple_D_phi(r, err_angle, D0)
     title("Nuage de points des couples [D \phi] pour D0=" + D0);
 end
 
+function scatter_couple_Dx_Dy(Dx, Dy, D0)
+    scatter(Dx, Dy)
+    title("Nuage de points des couples [Dx Dy] pour D0=" + D0);
+end
+
 function [D, phi] = couple_D_phi(D0, phi0, theta, r)
     D = D0 + r.*cos(theta);
     phi = phi0 + r.*sin(theta);
+end
+
+function [Dx, Dy] = distaces_axiales(D, phi, r, theta)
+    Dx = (D)*cosd(phi) + r.*cos(theta);
+    Dy = (D)*sind(phi) + r.*sin(theta);
 end
