@@ -87,27 +87,24 @@ scatter_module_err(r2, err_angle, sigma_2(2))
 %% 3. Valeurs aléatoires de la distance radiale et de l'angle de visée du radar
 D = [];
 phi = [];
+r_arr(1,:) = r1;
+r_arr(2,:) = r2;
+count = 1;
 
 figure
-
-subplot(2, 2, 1)
-[D, phi] = couple_D_phi(D0(1), phi0(1), err_angle, r1, D, phi);
-
-subplot(2, 2, 2)
-[D, phi] = couple_D_phi(D0(1), phi0(2), err_angle, r1, D, phi);
-
-subplot(2, 2, 3)
-[D, phi] = couple_D_phi(D0(2), phi0(1), err_angle, r2, D, phi);
-
-subplot(2, 2, 4)
-[D, phi] = couple_D_phi(D0(2), phi0(2), err_angle, r2, D, phi);
+for i = [1, 2]
+    for j = [1, 2]
+        subplot(2, 2, count)
+        [D, phi] = couple_D_phi(D0(i), phi0(j), err_angle, r_arr(i,:), D, phi);
+        count = count + 1;
+    end
+end
 
 %% 4. Distances axiales [Dx Dy]
 Dx = [];
 Dy = [];
-count = 1
-r_arr(1,:) = r1;
-r_arr(2,:) = r2;
+
+count = 1;
 
 figure
 for i = [1, 2]
@@ -117,7 +114,7 @@ for i = [1, 2]
         Dx = [Dx, Dx_t];
         Dy = [Dy, Dy_t];
         
-        count = count + 1
+        count = count + 1;
     end
 end
 
@@ -156,7 +153,7 @@ mat_cov = cov(Dx, Dy)
 
 %% 9. Ellipse d'incertitude 
 figure
-scatter_couple_Dx_Dy(Dx, Dy, D0(1));
+scatter_couple_Dx_Dy(Dx, Dy, D0(1), phi0(1));
 hold on
 plot_err_ellipse([moy1, moy2], mat_cov, 0.95)
 hold off
@@ -181,6 +178,11 @@ function scatter_couple_D_phi(r, err_angle, D0, phi0)
     title("Nuage de points des couples [D \phi] pour D0=" + D0 + " \phi0=" + phi0);
 end
 
+function scatter_couple_Dx_Dy(Dx, Dy, D0, phi0)
+    scatter(Dx, Dy)
+    title("Nuage de points des couples [Dx Dy] pour D0=" + D0 + " \phi0=" + phi0);
+end
+
 function [D, phi] = couple_D_phi(D0, phi0, theta, r, D, phi)
     D1 = D0 + r.*cos(theta);
     phi1 = phi0 + r.*sin(theta);
@@ -195,8 +197,7 @@ function [Dx, Dy] = distaces_axiales(D0, phi0, r, theta)
     Dx = (D0)*cosd(phi0) + r.*cos(theta);
     Dy = (D0)*sind(phi0) + r.*sin(theta);
     
-    scatter(Dx, Dy)
-    title("Nuage de points des couples [Dx Dy] pour D0=" + D0 + " \phi0=" + phi0);
+    scatter_couple_Dx_Dy(Dx, Dy, D0, phi0)
 end
 
 function plot_err_ellipse(mu, C, NC)
